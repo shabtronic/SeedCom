@@ -25,7 +25,7 @@ this adds new make commands
 - FILE
 
 3) Add to your project
-4) 
+
 add SeedComServer.cpp to your local makefile
 
 ```
@@ -100,5 +100,6 @@ and SEEDDUMP will list all those files inside.
 ## TODO
 
 Flash writing
+
 Zip Loading/Decoding e.t.c.
 
