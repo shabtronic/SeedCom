@@ -46,7 +46,8 @@ int main(void)
 ```
 make your project and flash
 
-test it out
+test it out!
+
 type "Seedcom" on the commandline
 
 ![](./Images/seedcom1.png)
