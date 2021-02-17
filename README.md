@@ -134,6 +134,7 @@ and SEEDDUMP will list all those files inside.
 yet to be decided, something like
 
 - Filename[256]
+- DateTime String[32]
 - FileSize(DWORD)
 - Crc32(DWORD)
 - RawData(BYTES)
