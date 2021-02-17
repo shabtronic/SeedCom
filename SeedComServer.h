@@ -39,7 +39,7 @@ void RebootToBootloader();
 void UartShouldReboot();
 
 // Initialize the comms, also sets up a GPIO button for rebooting
-void UartInitSerial(DaisySeed *hw,int RebootButton);
+void UartInitSerial(DaisySeed *hw,uint32_t BRate=115200,int RebootButton=-1);
 
 
 #endif

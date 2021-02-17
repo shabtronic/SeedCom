@@ -115,15 +115,20 @@ void UartShouldReboot()
 	Uartbutton.Debounce();
 	if (Uartbutton.Pressed() || Reboot)
 		{
-		UartSerialSend((const char*)"T\u001b[32m\n\r>>>Seed rebooting to DFU loader!\n\r\u001b[37m");
+		UartSerialSend((const char*)"\u001b[32m\n\r>>>Seed rebooting to DFU loader!\n\r\u001b[37m");
 
 		System::Delay(50);
 		RebootToBootloader();
 		}
 	}
 
-void UartInitSerial(DaisySeed* hw, int RebootButton)
+extern "C" uint8_t line_coding_fs[7];
+
+
+void UartInitSerial(DaisySeed* hw,uint32_t BRate, int RebootButton)
 	{
+	uint32_t* BaudRate = (uint32_t*)line_coding_fs;
+	*BaudRate = BRate;
 	SEED_ASSERT(hw, "Error passed in a null Daisyseed hardware!");
 	seed = hw;
 	if (seed)
