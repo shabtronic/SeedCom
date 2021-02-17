@@ -52,7 +52,9 @@ change to
 
 static uint8_t line_coding_fs[7] = {0x00, 0x10, 0x0E, 0x00, 0x00, 0x00, 0x08};
 
-for 921600 - tested and works fine
+rebuild your libdaisy.a
+
+max speed so far is 921600 - tested and works fine
 
 
 How do I upload files to flash
