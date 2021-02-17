@@ -19,7 +19,7 @@ Seedcom allows you to do a number of things:
 
 type "seedcom.bat" on the commandline - if you have gcc setup this will make the .exe for you
 
-2) copy the libdaisy/coremakefile into libdaisy/core
+2) copy the libdaisy/core/makefile into your libdaisy/core
 this adds new make commands
 - REBOOT
 - FILE
