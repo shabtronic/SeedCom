@@ -42,6 +42,14 @@ int main(void)
         }
 }
 ```
+How do I upload files to flash
+
+create a directory called QFLashZip in your main project folder, put some files in there - images,txt whatever
+
+"make zip" - will zip those files up into a file QFlashData.zip in your build directory
+
+"seedcom build/qflashdata.zip reboot" - will upload the QFlashData.zip to your seed external flash and reboot the seed into DFU mode
+
 How does this work?
 
 we send txt commands from the PC to seed via serial uart:
