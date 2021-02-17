@@ -57,7 +57,7 @@ type "SEEDBOOT" - it will reboot the seed into DFU mode
 ![](./Images/seedcom2.png)
 ## How do I change the transfer speed?
 
-currently it's hardcoded!
+currently it's hardcoded to 115200bps !
 
 \DaisyExamples\libdaisy\src\usbd\usbd_cdc_if.c line 204
 
