@@ -80,7 +80,7 @@ rebuild your libdaisy.a
 
 \DaisyExamples\Libdaisy\make clean all  (may have to do this twice!)
 
-max speed so far is 5,000,000 542kb/s - tested and works fine
+max speed so far is 5,000,000bps (542kb/s) - tested and works fine
 
 so that would be 14sec transfer time for the full 8MB
 
