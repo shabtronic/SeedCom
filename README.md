@@ -23,8 +23,12 @@ type "seedcom.bat" on the commandline - if you have gcc setup this will make the
 this adds new make commands
 - REBOOT
 - FILE
+- 
+3) Change the internal libs baudrate
 
-3) Add to your project
+    see below "How do I change the transfer speed" - this must be done, else the code won't compile
+
+4) Add to your project
 
 add SeedComServer.cpp to your local makefile
 
