@@ -42,18 +42,14 @@ int main(void)
         }
 }
 ```
-5) Change the Seeds usb uart speed - currently it's hardcoded!
+## How do I change the transfer speed?
 
+currently it's hardcoded!
 \DaisyExamples\libdaisy\src\usbd\usbd_cdc_if.c line 204
-
 static uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
-
 change to
-
 static uint8_t line_coding_fs[7] = {0x00, 0x10, 0x0E, 0x00, 0x00, 0x00, 0x08};
-
 rebuild your libdaisy.a
-
 max speed so far is 921600 - tested and works fine
 
 
