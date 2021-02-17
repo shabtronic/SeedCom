@@ -40,7 +40,8 @@ and the two SerialCom functions UartInitSerial and UartShouldReboot  to your mai
 #include "SeedComServer.h"
 int main(void)
 {
-    UartInitSerial(&seed,14); // 14 is a gpio pin with a switch that will also reboot for you!
+    // HW,Baudrate,GPIO reboot pin
+    UartInitSerial(&seed,10000000,14); // 14 is a gpio pin with a switch that will also reboot for you!
     while(1) 
         {
         UartShouldReboot();
@@ -75,14 +76,15 @@ uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
 
 so we can easily change the speed in main code
 
-change to any of these:
+You change the baudrate to any of these:
 ```
-//static uint8_t line_coding_fs[7] = {0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08}; // 115,200 10kb/s
-//static uint8_t line_coding_fs[7] = {0x00, 0x10, 0x0E, 0x00, 0x00, 0x00, 0x08}; // 921,000 100kb/s
-//static uint8_t line_coding_fs[7] = {0x80, 0x84, 0x1e, 0x00, 0x00, 0x00, 0x08}; // 2,000,000 217kb/s
-//static uint8_t line_coding_fs[7] = {0x40, 0x4B, 0x4C, 0x00, 0x00, 0x00, 0x08};   // 5,000,000 542kb/s
-//static uint8_t line_coding_fs[7] = {0x90, 0x96, 0x98, 0x00, 0x00, 0x00, 0x08}; // 10,000,000 1MB/s
-static uint8_t line_coding_fs[7] = {0x00, 0x2D, 0x31, 0x10, 0x00, 0x00, 0x08}; // 271,658,240 29MB/s
+115,200 10kb/s
+921,000 100kb/s
+2,000,000 217kb/s
+5,000,000 542kb/s
+10,000,000 1MB/s
+20,000,000 29MB/s
+50,000,000 5.4mb/s
 ```
 
 rebuild your libdaisy.a
@@ -97,7 +99,7 @@ ComPort Baud 271658240 data 8 stop 0
 PC: Found Seed on COM4 \Device\USBSER000
 PC: Uart speed is 271658240 = 29476.8Kb/s
 ```
-271,658,240bps (29MB/s) - untested - and seems totally wrong :)
+271,658,240bps (29MB/s) - untested - which seems like a bug, and is BONKERS :)
 
 so that would be 0.27 secs transfer time for the full 8MB
 
