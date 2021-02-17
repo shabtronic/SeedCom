@@ -18,7 +18,7 @@ How to install?
 add SeedComServer.cpp to your make file
 
 add SeedComerver.h to your main cpp file
-
+```
 #include "SeedComServer.h"
 int main(void)
 {
@@ -28,7 +28,7 @@ int main(void)
         UartShouldReboot();
         }
 }
-
+```
 How does this work?
 
 we send txt commands from the PC to seed via serial uart:
