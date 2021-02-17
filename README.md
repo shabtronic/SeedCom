@@ -156,6 +156,8 @@ yet to be decided, something like
 
 ## TODO
 
+File Transfer code
+
 Flash writing
 
 Zip Loading/Decoding e.t.c.
