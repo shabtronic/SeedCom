@@ -84,6 +84,8 @@ rebuild your libdaisy.a
 
 \DaisyExamples\Libdaisy\make clean all  (may have to do this twice!)
 
+then make your project!
+
 max speed so far is 
 ```
 ComPort Baud 271658240 data 8 stop 0
