@@ -21,8 +21,8 @@ type seedcom.bat on the commandline - if you have gcc setup this will make the .
 
 2) copy the libdaisy/coremakefile into libdaisy/core
 this adds new make commands
-REBOOT
-file
+- REBOOT
+- FILE
 
 3) 
 add SeedComServer.cpp to your local makefile
