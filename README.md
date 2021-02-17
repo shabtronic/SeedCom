@@ -76,15 +76,23 @@ change to any of these:
 
 //static uint8_t line_coding_fs[7] = {0x40, 0x4B, 0x4C, 0x00, 0x00, 0x00, 0x08};   // 5,000,000 542kb/s
 
-static uint8_t line_coding_fs[7] = {0x90, 0x96, 0x98, 0x00, 0x00, 0x00, 0x08}; // 10,000,000 1MB/s
+//static uint8_t line_coding_fs[7] = {0x90, 0x96, 0x98, 0x00, 0x00, 0x00, 0x08}; // 10,000,000 1MB/s
+
+static uint8_t line_coding_fs[7] = {0x00, 0x2D, 0x31, 0x10, 0x00, 0x00, 0x08}; // 20,000,000 2MB/s
 
 rebuild your libdaisy.a
 
 \DaisyExamples\Libdaisy\make clean all  (may have to do this twice!)
 
-max speed so far is 5,000,000bps (542kb/s) - tested and works fine
+max speed so far is 
+```
+ComPort Baud 271658240 data 8 stop 0
+PC: Found Seed on COM4 \Device\USBSER000
+PC: Uart speed is 271658240 = 29476.8Kb/s
+```
+271,658,240bps (29MB/s) - un tested - and seems totally wrong :)
 
-so that would be 14sec transfer time for the full 8MB
+so that would be 2.7 secs transfer time for the full 8MB
 
 
 ## How do I upload files to flash
