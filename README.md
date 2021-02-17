@@ -69,6 +69,8 @@ static uint8_t line_coding_fs[7] = {0x00, 0x10, 0x0E, 0x00, 0x00, 0x00, 0x08};
 
 rebuild your libdaisy.a
 
+\DaisyExamples\Libdaisy\make clean all  (may have to do this twice!)
+
 max speed so far is 921600bps (100KB/s) - tested and works fine
 
 
