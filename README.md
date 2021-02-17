@@ -66,6 +66,15 @@ currently it's hardcoded to 115200bps !
 ```
 static uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
 ```
+
+you have to change that line to
+
+```
+uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
+```
+
+so we can easily change the speed in main code
+
 change to any of these:
 ```
 //static uint8_t line_coding_fs[7] = {0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08}; // 115,200 10kb/s
