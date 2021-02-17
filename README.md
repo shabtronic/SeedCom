@@ -131,6 +131,8 @@ and SEEDDUMP will list all those files inside.
 
 ## Flash Memory Layout
 
+yet to be decided
+
 Filename[256]
 
 FileSize(DWORD)
