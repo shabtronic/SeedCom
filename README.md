@@ -33,6 +33,9 @@ add SeedComServer.cpp to your local makefile
 CPP_SOURCES = MyMain.cpp SeedComServer.cpp
 ```
 add SeedComServer.h to your main cpp file
+
+and the two SerialCom functions UartInitSerial and UartShouldReboot  to your main  and main loop.
+
 ```
 #include "SeedComServer.h"
 int main(void)
