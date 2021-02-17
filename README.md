@@ -68,13 +68,15 @@ static uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
 
 change to
 
-static uint8_t line_coding_fs[7] = {0x00, 0x10, 0x0E, 0x00, 0x00, 0x00, 0x08};
-
+//static uint8_t line_coding_fs[7] = {0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08}; // 115,200 10kb/s
+//static uint8_t line_coding_fs[7] = {0x00, 0x10, 0x0E, 0x00, 0x00, 0x00, 0x08}; // 921,000 100kb/s
+//static uint8_t line_coding_fs[7] = {0x80, 0x84, 0x1e, 0x00, 0x00, 0x00, 0x08}; // 2,000,000 217kb/s
+static uint8_t line_coding_fs[7] = {0x40, 0x4B, 0x4C, 0x00, 0x00, 0x00, 0x08};   // 5,000,000 542kb/s
 rebuild your libdaisy.a
 
 \DaisyExamples\Libdaisy\make clean all  (may have to do this twice!)
 
-max speed so far is 921600bps (100KB/s) - tested and works fine
+max speed so far is 5,000,000 542kb/s - tested and works fine
 
 
 ## How do I upload files to flash
