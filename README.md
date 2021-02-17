@@ -105,7 +105,7 @@ PC: Uart speed is 271658240 = 29476.8Kb/s
 ```
 271,658,240bps (29MB/s) - untested - which seems like a bug, and is BONKERS :)
 
-so that would be 0.27 secs transfer time for the full 8MB
+so that would be 0.027 secs transfer time for the full 8MB - which is clearly insanity.
 
 
 ## How do I upload files to flash
