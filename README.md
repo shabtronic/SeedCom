@@ -44,6 +44,16 @@ int main(void)
         }
 }
 ```
+make your project and flash
+
+test it out
+type "Seedcom" on the commandline
+
+![](./Images/seedcom1.png)
+
+type "SEEDBOOT" - it will reboot the seed into DFU mode
+
+![](./Images/seedcom2.png)
 ## How do I change the transfer speed?
 
 currently it's hardcoded!
