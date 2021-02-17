@@ -1,30 +1,41 @@
 #include "SeedComServer.h"
 #include <string.h>
+
 extern "C" void HAL_NVIC_SystemReset();
 
-daisy::DaisySeed* seed;
+DaisySeed* seed = 0;
+
+bool GetFlashFile(char*, FlashFile& FF)
+	{
+	return false;
+	}
+// Free up any SDRAM used by FlashFile
+void FreeFlashFileRam(FlashFile& FF)
+	{
+
+	}
 
 void RebootToBootloader()
-    {
-    // Initialize Boot Pin
-    dsy_gpio_pin bootpin = { DSY_GPIOG, 3 };
-    dsy_gpio pin;
-    pin.mode = DSY_GPIO_MODE_OUTPUT_PP;
-    pin.pin = bootpin;
-    dsy_gpio_init(&pin);
+	{
+	// Initialize Boot Pin
+	dsy_gpio_pin bootpin = { DSY_GPIOG, 3 };
+	dsy_gpio pin;
+	pin.mode = DSY_GPIO_MODE_OUTPUT_PP;
+	pin.pin = bootpin;
+	dsy_gpio_init(&pin);
 
-    // Pull Pin HIGH
-    dsy_gpio_write(&pin, 1);
+	// Pull Pin HIGH
+	dsy_gpio_write(&pin, 1);
 
-    // wait a few ms for cap to charge
-    seed->DelayMs(10);
+	// wait a few ms for cap to charge
+	seed->DelayMs(10);
 
-    // Software Reset
-    HAL_NVIC_SystemReset();
+	// Software Reset
+	HAL_NVIC_SystemReset();
 
-    seed->DelayMs(10);
+	seed->DelayMs(10);
 
-    }
+	}
 
 // echo hello > COM4 e.t.c.?
 static uint64_t CommandShift = 0;
@@ -60,64 +71,69 @@ daisy::Switch Uartbutton;
 #define ANSIWHITE "\033[0m"
 
 void UartInitSentFile()
-    {
+	{
 
-    }
+	}
 
-void UartSerialSend(char* msg)
-    {
-    seed->usb_handle.TransmitInternal((uint8_t*)msg, strlen(msg));
-    }
+void UartSerialSend(const char* msg)
+	{
+	seed->usb_handle.TransmitInternal((uint8_t*)msg, strlen(msg));
+	}
 int BytesNeeded = 0;
 void UsbSerialServer(uint8_t* buf, uint32_t* len)
-    {
-    for (size_t i = 0; i < *len; i++)
-        {
-        if (BytesNeeded)
-            {
+	{
+	for (size_t i = 0; i < *len; i++)
+		{
+		if (BytesNeeded)
+			{
 
-            }
-        else
-            {
-            CommandShift = (CommandShift << 8) + buf[i];
-            // Last char in command doesnt get echoed for some reason
-            // TransmitInternal doesn't block until the previous data sent?
-            // or some kind of race condition
-            // so I add the last command char on the front of the
-            // return resonse string
-            // probably better to concat everything into one string and send that
+			}
+		else
+			{
+			CommandShift = (CommandShift << 8) + buf[i];
+			// Last char in command doesnt get echoed for some reason
+			// TransmitInternal doesn't block until the previous data sent?
+			// or some kind of race condition
+			// so I add the last command char on the front of the
+			// return resonse string
+			// probably better to concat everything into one string and send that
 
 
-            if (CommandShift == sHELO)
-                UartSerialSend("O SEEDGOOD\u001b[32m\n\r>>>HELO PC from Seed!\n\r\u001b[37m");
-            if (CommandShift == sBOOT)
-                {
-                Reboot = true; // cant reboot inside this callback!
-                }
+			if (CommandShift == sHELO)
+				UartSerialSend((const char*)"O SEEDGOOD\u001b[32m\n\r>>>HELO PC from Seed!\n\r\u001b[37m");
+			if (CommandShift == sBOOT)
+				{
+				Reboot = true; // cant reboot inside this callback!
+				}
 
-            seed->usb_handle.TransmitInternal((uint8_t*)&buf[i], 1);
-            }
-        }
-    }
+			seed->usb_handle.TransmitInternal((uint8_t*)&buf[i], 1);
+			}
+		}
+	}
 void UartShouldReboot()
-    {
-    Uartbutton.Debounce();
-    if (Uartbutton.Pressed() || Reboot)
-        {
-        UartSerialSend("T\u001b[32m\n\r>>>Seed rebooting to DFU loader!\n\r\u001b[37m");
+	{
+	Uartbutton.Debounce();
+	if (Uartbutton.Pressed() || Reboot)
+		{
+		UartSerialSend((const char*)"T\u001b[32m\n\r>>>Seed rebooting to DFU loader!\n\r\u001b[37m");
 
-        daisy::System::Delay(50);
-        RebootToBootloader();
-        }
-    }
+		System::Delay(50);
+		RebootToBootloader();
+		}
+	}
 
-void UartInitSerial(daisy::DaisySeed *hw,int RebootButton)
-    {
-    seed->usb_handle.Init(daisy::UsbHandle::FS_INTERNAL);
-    char* msg = ">>>>Init Seed Uart server";
+void UartInitSerial(DaisySeed* hw, int RebootButton)
+	{
+	SEED_ASSERT(hw, "Error passed in a null Daisyseed hardware!");
+	seed = hw;
+	if (seed)
+		{
+		seed->usb_handle.Init(UsbHandle::FS_INTERNAL);
+		const char* msg = ">>>>Init Seed Uart server";
 
-    seed->usb_handle.TransmitInternal((uint8_t*)msg, strlen(msg));
-    daisy::System::Delay(500);
-    seed->usb_handle.SetReceiveCallback(UsbSerialServer, daisy::UsbHandle::FS_INTERNAL);
-    Uartbutton.Init(seed->GetPin(RebootButton), 10);
-    }
+		seed->usb_handle.TransmitInternal((uint8_t*)msg, strlen(msg));
+		System::Delay(500);
+		seed->usb_handle.SetReceiveCallback(UsbSerialServer, UsbHandle::FS_INTERNAL);
+		Uartbutton.Init(seed->GetPin(RebootButton), 10);
+		}
+	}

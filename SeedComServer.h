@@ -6,9 +6,36 @@
 #include "daisysp.h"
 #include "daisy_seed.h"
 
+using namespace daisysp;
+using namespace daisy;
+
+#define SEED_ASSERT(x,y)
+
+// Simple SDRAM struct
+struct FlashFile
+	{
+	char* Data;
+	int DataSize;
+	};
+
+// Copies a file from the QFlashData.zip in external flash into SDRAM - if it exists
+// .Data and .DataSize will be zero if the file doesn't exist
+// returns true or false if the file exists or not
+// This will automatically decompress from the zip file for you
+
+bool GetFlashFile(char*, FlashFile& FF);
+
+// Free up any SDRAM used by FlashFile
+void FreeFlashFileRam(FlashFile& FF);
+
+// If you want to reboot yourself in code
 void RebootToBootloader();
+
+// Put in main while loop - checks to see if we should reboot
 void UartShouldReboot();
-void UartInitSerial(daisy::DaisySeed *hw,int RebootButton);
+
+// Initialize the comms, also sets up a GPIO button for rebooting
+void UartInitSerial(DaisySeed *hw,int RebootButton);
 
 
 #endif
