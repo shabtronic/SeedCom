@@ -45,7 +45,7 @@ and the two SerialCom functions UartInitSerial and UartShouldReboot  to your mai
 int main(void)
 {
     // HW,Baudrate,GPIO reboot pin
-    UartInitSerial(&seed,10000000,14); // 14 is a gpio pin with a switch that will also reboot for you!
+    UartInitSerial(&seed,10000000,14); // 14 is a gpio pin with a switch to GND that will also reboot for you!
     while(1) 
         {
         UartShouldReboot();
