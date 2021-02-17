@@ -76,9 +76,9 @@ we send txt commands from the PC to seed via serial uart:
 - SEEDMEMO - seed will dump memory usage
 
 The file transfer protocol is:
--	PC sends this csv data:
--		FileName,FileSize,FileSize2,CRC32,Type,.....raw file data in 1024 byte chunks....
--		FileName is a standard string - without the null char
+-	PC sends csv data:
+-	FileName,FileSize,FileSize2,CRC32,Type,.....raw file data in 1024 byte chunks....
+-	FileName is a standard string - without the null char
 - 	FileSize,FileSize2,CRC32 and Type are sent as raw DWORD's
 
 Seed will only receive the file if the CRC is different - this is handy - no need to touch the files and
