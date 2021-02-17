@@ -15,6 +15,20 @@ Seedcom allows you to do a number of things:
 
 How to install?
 
+add SeedComServer.cpp to your make file
+
+add SeedComerver.h to your main cpp file
+
+#include "SeedComServer.h"
+int main(void)
+{
+    UartInitSerial(&seed,14);
+    while(1) 
+        {
+        UartShouldReboot();
+        }
+}
+
 How does this work?
 
 we send txt commands from the PC to seed via serial uart:
