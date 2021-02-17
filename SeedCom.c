@@ -17,9 +17,11 @@ const int UartStopBits = 1;
 #define ANSICYAN "\033[0;36m"
 #define ANSIWHITE "\033[0m"
 
-// PICOHELO - pi will return PIOK
-// PICORBOO - pi will reboot
-// PICOFILE - pi will expect file info and transfer
+// SEEDHELO - seed will return PIOK
+// SEEDBOOT - seed will reboot
+// SEEDFILE - seed will expect file info and transfer into external flash
+// SEEDDUMP - seed will list files currently in external flash
+// SEEDMEMO - seed will dump memory usage
 //		FileName,FileSize,FileSize2,CRC32,Type,.....raw file data in 1024 byte chunks....
 //		pi will send back PIOK after every 1024 byte chunk
 
