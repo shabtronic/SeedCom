@@ -5,6 +5,7 @@
 const int UartSpeed = 115200;
 const int UartBits = 8;
 const int UartStopBits = 1;
+DCB dcbSerialParams = { 0 };
 #define ConsumeTimeout 5
 
 #define ORIGIN "PC: "
@@ -37,6 +38,20 @@ const int UartStopBits = 1;
 // Currently only supports 1 file in flash, but since it's a .zip file - it contains a whole file system structure
 // and SEEDDUMP will list all those files inside.
 
+
+// printf doesn't redirect in mingw64 - so this:
+HANDLE screen;
+void WriteScreen(char* format, ...)
+	{
+	char buffer[256];
+	va_list args;
+	va_start(args, format);
+	vsnprintf(buffer, 255, format, args);
+	DWORD written;
+	WriteFile(screen, buffer, strlen(buffer), &written, NULL);
+	va_end(args);
+	}
+
 char cornerset[] = "│─┐└┘┌";
 char conerset2[] = "║═╗╚╝╔";
 
@@ -64,7 +79,7 @@ HANDLE OpenPort(char* Name)
 	HANDLE hSerial = CreateFile(Name, GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (hSerial == INVALID_HANDLE_VALUE)
 		{
-		printf(ANSIRED"Error opening: %s\n"ANSIWHITE, Name);
+		WriteScreen(ANSIRED"Error opening: %s\n"ANSIWHITE, Name);
 		return 0;
 		}
 	return hSerial;
@@ -83,19 +98,19 @@ int FileExists(char* filename)
 
 void PortConfig(HANDLE port, int Speed)
 	{
-	DCB dcbSerialParams = { 0 };
+
 	dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
 	GetCommState(port, &dcbSerialParams);
 
-	printf("ComPort Baud %d data %d stop %d \n", dcbSerialParams.BaudRate, dcbSerialParams.ByteSize, (int)dcbSerialParams.StopBits);
-	if (!BuildCommDCB("baud=115200 parity=n data=8 stop=1", &port))
-		printf("error building comm DCB");
+	WriteScreen("ComPort Baud %d data %d stop %d \n", dcbSerialParams.BaudRate, dcbSerialParams.ByteSize, (int)dcbSerialParams.StopBits);
+	char Temp[256];
+	sprintf(Temp, "baud=%d parity=n data=8 stop=1", dcbSerialParams.BaudRate);
+	if (!BuildCommDCB(Temp, &port))
+		WriteScreen("error building comm DCB");
 	if (!SetCommState(port, &dcbSerialParams))
-		printf("error Setting commstate\n");
+		WriteScreen("error Setting commstate\n");
 
 	GetCommState(port, &dcbSerialParams);
-	//printf("Current Baud %d data %d stop %d \n", dcbSerialParams.BaudRate, dcbSerialParams.ByteSize, (int)dcbSerialParams.StopBits);
-
 
 	COMMTIMEOUTS timeouts = { 0 };
 	timeouts.ReadIntervalTimeout = 0;
@@ -104,13 +119,13 @@ void PortConfig(HANDLE port, int Speed)
 	timeouts.WriteTotalTimeoutConstant = 0;
 	timeouts.WriteTotalTimeoutMultiplier = 1;
 	if (!SetCommTimeouts(port, &timeouts))
-		printf("error setCommTimeouts!\n");
+		WriteScreen("error setCommTimeouts!\n");
 
 	if (!EscapeCommFunction(port, CLRDTR))
-		printf("clearing DTR\n");
+		WriteScreen("clearing DTR\n");
 	Sleep(200);
 	if (!EscapeCommFunction(port, SETDTR))
-		printf("error setting DTR\n");
+		WriteScreen("error setting DTR\n");
 	}
 
 
@@ -164,7 +179,7 @@ int Consume(HANDLE ComPort, char* EatMe, int TimeOut)
 			}
 		else
 			{
-			printf("Timedout!\n");
+			WriteScreen("Timedout!\n");
 			TimeOut--;
 			}
 		}
@@ -174,7 +189,7 @@ int Consume(HANDLE ComPort, char* EatMe, int TimeOut)
 	}
 void SendFile(HANDLE comport, char* filename)
 	{
-	printf("PC: Sending File %s to Seed\n", filename);
+	WriteScreen("PC: Sending File %s to Seed\n", filename);
 	FILE* F = fopen(filename, "rb");
 	if (F)
 		{
@@ -186,7 +201,7 @@ void SendFile(HANDLE comport, char* filename)
 		char* Data = (char*)malloc(fsize);
 		fread(Data, 1, fsize, F);
 		fclose(F);
-		printf("PC: file size is %2.1fKb\n", (float)fsize / (1024));
+		WriteScreen("PC: file size is %2.1fKb\n", (float)fsize / (1024));
 		DWORD crc = crc32(Data, fsize);
 
 		WriteString(comport, "SEEDFILE");
@@ -204,16 +219,16 @@ void SendFile(HANDLE comport, char* filename)
 
 		char* tdata = Data;
 
-		printf(ANSIYELLOW"PC: File Transfer: "ANSIWHITE);
+		WriteScreen(ANSIYELLOW"PC: File Transfer: "ANSIWHITE);
 		while (fsize)
 			{
 			float percent = 100 - 100 * ((float)fsize / ofsize);
-			printf(ANSIGREEN"%5.1f%%\b\b\b\b\b\b"ANSIGREEN, percent);
+			WriteScreen(ANSIGREEN"%5.1f%%\b\b\b\b\b\b"ANSIGREEN, percent);
 			if (fsize >= 1024)
 				{
 				if (WriteBytes(comport, tdata, 1024) != 1024 || !Consume(comport, "SEEDGOOD", 50))
 					{
-					printf(ANSIRED"\nPC: Error Sending File Chunk\n"ANSIWHITE);
+					WriteScreen(ANSIRED"\nPC: Error Sending File Chunk\n"ANSIWHITE);
 					goto cleanup;
 					}
 				tdata += 1024;
@@ -223,19 +238,19 @@ void SendFile(HANDLE comport, char* filename)
 				{
 				if (WriteBytes(comport, tdata, fsize) != fsize || !Consume(comport, "SEEDGOOD", 500))
 					{
-					printf(ANSIRED"\nPC: Error Sending File Chunk\n"ANSIWHITE);
+					WriteScreen(ANSIRED"\nPC: Error Sending File Chunk\n"ANSIWHITE);
 					goto cleanup;
 					}
 				fsize = 0;
 				st = GetTime() - st;
-				printf(ANSIGREEN"100%%  in %2.1f secs\n\n"ANSIWHITE, st);
+				WriteScreen(ANSIGREEN"100%%  in %2.1f secs\n\n"ANSIWHITE, st);
 				}
 			}
 	cleanup:
 		free(Data);
 		}
 	else
-		printf("PC: error file %s not found\n", filename);
+		WriteScreen("PC: error file %s not found\n", filename);
 	}
 HANDLE EnumComPorts()
 	{
@@ -251,7 +266,7 @@ HANDLE EnumComPorts()
 			WriteString(ComPort, "SEEDHELO");
 			if (Consume(ComPort, "SEEDGOOD", 15))
 				{
-				printf("PC: Found Seed on %s %s\n", ComString, Res);
+				WriteScreen("PC: Found Seed on %s %s\n", ComString, Res);
 				return ComPort;
 				}
 			CloseHandle(ComPort);
@@ -260,20 +275,25 @@ HANDLE EnumComPorts()
 	return 0;
 	}
 
+
+
+
+
 int main(int nArgC, char** ppArgV)
 	{
+	screen = GetStdHandle(STD_OUTPUT_HANDLE);
 	char* pArg0 = *ppArgV++;
 	nArgC--;
 	system("cls");
-	printf(ANSIGREEN"SeedCom V1.00 Serial Daisy Seed Comms Utility (C) 2021 S.D.Smith\n\n"ANSIWHITE);
+	WriteScreen(ANSIGREEN"SeedCom V1.00 Serial Daisy Seed Comms Utility (C) 2021 S.D.Smith\n\n"ANSIWHITE);
 
 	HANDLE ComPort = EnumComPorts();
 	if (!ComPort)
 		{
-		printf(ANSIRED"\nPC: Daisy Seed not found :(\n"ANSIWHITE);
+		WriteScreen(ANSIRED"\nPC: Daisy Seed not found :(\n"ANSIWHITE);
 		return 0;
 		}
-	printf("PC: Uart speed is %d = %2.1fKb/s\n", UartSpeed, (float)UartSpeed / (9 * 1024));
+	WriteScreen("PC: Uart speed is %d = %2.1fKb/s\n", dcbSerialParams.BaudRate, (float)dcbSerialParams.BaudRate / (9 * 1024));
 
 	char* filesend = 0;
 	int Reboot = 0;
@@ -295,17 +315,18 @@ int main(int nArgC, char** ppArgV)
 		char ch;
 		ReadFile(ComPort, Buf, 1, &dwBytesRead, NULL);
 		Buf[dwBytesRead] = 0;
-		printf("%s", Buf);
+		
+		WriteScreen("%s", Buf);
 
 		while (kbhit())
 			{
 			ch = getch();
-			if (ch == 13) printf("\n");
+			if (ch == 13) WriteScreen("\n");
 			WriteFile(ComPort, &ch, 1, &written, NULL);
 			}
 		if (Reboot)
 			{
-			printf("PC: Rebooting Seed\n");
+			WriteScreen("PC: Rebooting Seed\n");
 			WriteString(ComPort, "SEEDBOOT");
 			Reboot = 0;
 			}

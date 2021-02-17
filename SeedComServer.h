@@ -6,6 +6,10 @@
 #include "daisysp.h"
 #include "daisy_seed.h"
 
+// Changing usb uart speed:
+// \DaisyExamples\libdaisy\src\usbd\usbd_cdc_if.c line 204
+//static uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
+
 using namespace daisysp;
 using namespace daisy;
 
