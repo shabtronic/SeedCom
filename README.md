@@ -56,7 +56,7 @@ static uint8_t line_coding_fs[7] = {0x00, 0x10, 0x0E, 0x00, 0x00, 0x00, 0x08};
 
 rebuild your libdaisy.a
 
-max speed so far is 921600 - tested and works fine
+max speed so far is 921600bps (100KB/s) - tested and works fine
 
 
 ## How do I upload files to flash
