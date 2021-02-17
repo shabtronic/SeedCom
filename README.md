@@ -25,7 +25,9 @@ REBOOT
 file
 
 3) 
-add SeedComServer.cpp to your make file
+add SeedComServer.cpp to your local makefile
+# Sources
+CPP_SOURCES = MyMain.cpp SeedComServer.cpp
 
 add SeedComerver.h to your main cpp file
 ```
