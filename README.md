@@ -17,15 +17,17 @@ Seedcom allows you to do a number of things:
 
 1) Make seedcom.exe
 
-type seedcom.bat on the commandline - if you have gcc setup this will make the .exe for you
+type "seedcom.bat" on the commandline - if you have gcc setup this will make the .exe for you
 
 2) copy the libdaisy/coremakefile into libdaisy/core
 this adds new make commands
 - REBOOT
 - FILE
 
-3) 
+3) Add to your project
+4) 
 add SeedComServer.cpp to your local makefile
+
 ```
 # Sources
 CPP_SOURCES = MyMain.cpp SeedComServer.cpp
