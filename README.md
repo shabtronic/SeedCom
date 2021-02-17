@@ -13,7 +13,7 @@ Seedcom allows you to do a number of things:
 
 4) View general debug output
 
-##How to install?
+##How to install?##
 
 1) Make seedcom.exe
 
@@ -57,7 +57,7 @@ rebuild your libdaisy.a
 max speed so far is 921600 - tested and works fine
 
 
-##How do I upload files to flash
+##How do I upload files to flash##
 
 create a directory called QFLashZip in your main project folder, put some files in there - images,txt whatever
 
@@ -65,7 +65,7 @@ create a directory called QFLashZip in your main project folder, put some files 
 
 "seedcom build/qflashdata.zip reboot" - will upload the QFlashData.zip to your seed external flash and reboot the seed into DFU mode
 
-##How does this work?
+##How does this work?##
 
 we send txt commands from the PC to seed via serial uart:
 
@@ -92,7 +92,7 @@ For the seed - the filename will currently always be "QFlashData.zip"
 Currently only supports 1 file in flash, but since it's a .zip file - it contains a whole file system structure
 and SEEDDUMP will list all those files inside.
 
-##TODO
+##TODO##
 
 Flash writing
 Zip Loading/Decoding e.t.c.
