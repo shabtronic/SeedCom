@@ -35,7 +35,7 @@ add SeedComServer.h to your main cpp file
 #include "SeedComServer.h"
 int main(void)
 {
-    UartInitSerial(&seed,14);
+    UartInitSerial(&seed,14); // 14 is a gpio pin with a switch that will also reboot for you!
     while(1) 
         {
         UartShouldReboot();
