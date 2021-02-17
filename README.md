@@ -69,11 +69,11 @@ How does this work?
 
 we send txt commands from the PC to seed via serial uart:
 
--SEEDHELO - seed will return SEEDGOOD
--SEEDBOOT - seed will reboot into DFU mode
--SEEDFILE - seed will expect file info and transfer raw data into external flash (see protocol below)
--SEEDDUMP - seed will list all the files currently in external flash file "QFlashData.zip"
--SEEDMEMO - seed will dump memory usage
+- SEEDHELO - seed will return SEEDGOOD
+- SEEDBOOT - seed will reboot into DFU mode
+- SEEDFILE - seed will expect file info and transfer raw data into external flash (see protocol below)
+- SEEDDUMP - seed will list all the files currently in external flash file "QFlashData.zip"
+- SEEDMEMO - seed will dump memory usage
 
 The file transfer protocol is:
 	-PC sends this csv data:
