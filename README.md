@@ -131,15 +131,12 @@ and SEEDDUMP will list all those files inside.
 
 ## Flash Memory Layout
 
-yet to be decided
+yet to be decided, something like
 
-Filename[256]
-
-FileSize(DWORD)
-
-Crc32(DWORD)
-
-RawData(BYTES)
+- Filename[256]
+- FileSize(DWORD)
+- Crc32(DWORD)
+- RawData(BYTES)
 
 ## TODO
 
