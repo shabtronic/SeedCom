@@ -15,6 +15,16 @@ Seedcom allows you to do a number of things:
 
 How to install?
 
+1) Make seedcom.exe
+
+type seedcom.bat on the commandline - if you have gcc setup this will make the .exe for you
+
+2) copy the libdaisy/coremakefile into libdaisy/core
+this adds new make commands
+REBOOT
+file
+
+3) 
 add SeedComServer.cpp to your make file
 
 add SeedComerver.h to your main cpp file
