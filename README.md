@@ -19,22 +19,21 @@ How does this work?
 
 we send txt commands from the PC to seed via serial uart:
 
-// SEEDHELO - seed will return SEEDGOOD
-// SEEDBOOT - seed will reboot into DFU mode
-// SEEDFILE - seed will expect file info and transfer raw data into external flash (see protocol below)
-// SEEDDUMP - seed will list all the files currently in external flash file "QFlashData.zip"
-// SEEDMEMO - seed will dump memory usage
+SEEDHELO - seed will return SEEDGOOD
+SEEDBOOT - seed will reboot into DFU mode
+SEEDFILE - seed will expect file info and transfer raw data into external flash (see protocol below)
+SEEDDUMP - seed will list all the files currently in external flash file "QFlashData.zip"
+SEEDMEMO - seed will dump memory usage
 
-// The file transfer protocol is:
-//		PC sends this csv data:
-//			FileName,FileSize,FileSize2,CRC32,Type,.....raw file data in 1024 byte chunks....
-//
-//		FileName is a standard string - without the null char
-//		FileSize,FileSize2,CRC32 and Type are sent as raw DWORD's
+The file transfer protocol is:
+	PC sends this csv data:
+		FileName,FileSize,FileSize2,CRC32,Type,.....raw file data in 1024 byte chunks....
+		FileName is a standard string - without the null char
+  	FileSize,FileSize2,CRC32 and Type are sent as raw DWORD's
 
-//		Seed will send back SEEDGOOD after every 1024 byte chunk and the final chunk has been received
+Seed will send back SEEDGOOD after every 1024 byte chunk and the final chunk has been received
 
-// For the seed - the filename will currently always be "QFlashData.zip"
+For the seed - the filename will currently always be "QFlashData.zip"
 
-// Currently only supports 1 file in flash, but since it's a .zip file - it contains a whole file system structure
-// and SEEDDUMP will list all those files inside.
+Currently only supports 1 file in flash, but since it's a .zip file - it contains a whole file system structure
+and SEEDDUMP will list all those files inside.
