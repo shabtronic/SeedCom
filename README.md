@@ -97,7 +97,7 @@ so that would be 0.27 secs transfer time for the full 8MB
 
 ## How do I upload files to flash
 
-create a directory called QFLashZip in your main project folder, put some files in there - images,txt whatever
+create a directory called QFlashZip in your main project folder, put some files in there - images,txt whatever
 
 "make zip" - will zip those files up into a file QFlashData.zip in your build directory
 
