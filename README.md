@@ -179,5 +179,6 @@ Flash writing
 Zip Loading/Decoding e.t.c.
 
 WatchDog crash/hang into DFU mode
+
 Instrumented Profiling system
 
