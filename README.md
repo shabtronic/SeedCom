@@ -82,6 +82,8 @@ rebuild your libdaisy.a
 
 max speed so far is 5,000,000 542kb/s - tested and works fine
 
+so that would be 14sec transfer time for the full 8MB
+
 
 ## How do I upload files to flash
 
