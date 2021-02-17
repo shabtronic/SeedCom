@@ -90,9 +90,9 @@ ComPort Baud 271658240 data 8 stop 0
 PC: Found Seed on COM4 \Device\USBSER000
 PC: Uart speed is 271658240 = 29476.8Kb/s
 ```
-271,658,240bps (29MB/s) - un tested - and seems totally wrong :)
+271,658,240bps (29MB/s) - untested - and seems totally wrong :)
 
-so that would be 0.02 secs transfer time for the full 8MB
+so that would be 0.27 secs transfer time for the full 8MB
 
 
 ## How do I upload files to flash
