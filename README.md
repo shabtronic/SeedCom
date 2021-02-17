@@ -77,6 +77,7 @@ change to any of these:
 //static uint8_t line_coding_fs[7] = {0x40, 0x4B, 0x4C, 0x00, 0x00, 0x00, 0x08};   // 5,000,000 542kb/s
 
 static uint8_t line_coding_fs[7] = {0x90, 0x96, 0x98, 0x00, 0x00, 0x00, 0x08}; // 10,000,000 1MB/s
+
 rebuild your libdaisy.a
 
 \DaisyExamples\Libdaisy\make clean all  (may have to do this twice!)
