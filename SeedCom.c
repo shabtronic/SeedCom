@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <conio.h>
-const int UartSpeed = 115200 ;
+const int UartSpeed = 115200;
 const int UartBits = 8;
 const int UartStopBits = 1;
 #define ConsumeTimeout 5
@@ -17,17 +17,30 @@ const int UartStopBits = 1;
 #define ANSICYAN "\033[0;36m"
 #define ANSIWHITE "\033[0m"
 
-// SEEDHELO - seed will return PIOK
-// SEEDBOOT - seed will reboot
-// SEEDFILE - seed will expect file info and transfer into external flash
-// SEEDDUMP - seed will list files currently in external flash
+// SEEDHELO - seed will return SEEDGOOD
+// SEEDBOOT - seed will reboot into DFU mode
+// SEEDFILE - seed will expect file info and transfer raw data into external flash (see protocol below)
+// SEEDDUMP - seed will list all the files currently in external flash file "QFlashData.zip"
 // SEEDMEMO - seed will dump memory usage
-//		FileName,FileSize,FileSize2,CRC32,Type,.....raw file data in 1024 byte chunks....
-//		pi will send back PIOK after every 1024 byte chunk
+
+// The file transfer protocol is:
+//		PC sends this csv data:
+//			FileName,FileSize,FileSize2,CRC32,Type,.....raw file data in 1024 byte chunks....
+//
+//		FileName is a standard string - without the null char
+//		FileSize,FileSize2,CRC32 and Type are sent as raw DWORD's
+
+//		Seed will send back SEEDGOOD after every 1024 byte chunk and the final chunk has been received
+
+// For the seed - the filename will currently always be "QFlashData.zip"
+
+// Currently only supports 1 file in flash, but since it's a .zip file - it contains a whole file system structure
+// and SEEDDUMP will list all those files inside.
 
 char cornerset[] = "│─┐└┘┌";
 char conerset2[] = "║═╗╚╝╔";
-unsigned int crc32(const void *data, unsigned int n_bytes)
+
+unsigned int crc32(const void* data, unsigned int n_bytes)
 	{
 	unsigned int crc = 0;
 	static unsigned int table[0x100] = { 0 };
@@ -59,7 +72,7 @@ HANDLE OpenPort(char* Name)
 
 int FileExists(char* filename)
 	{
-	FILE *F = fopen(filename, "rb");
+	FILE* F = fopen(filename, "rb");
 	if (F)
 		{
 		fclose(F);
@@ -73,13 +86,7 @@ void PortConfig(HANDLE port, int Speed)
 	DCB dcbSerialParams = { 0 };
 	dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
 	GetCommState(port, &dcbSerialParams);
-	/*dcbSerialParams.BaudRate = (DWORD)Speed;
-	dcbSerialParams.ByteSize = UartBits;
-	dcbSerialParams.StopBits = ONESTOPBIT;
-	dcbSerialParams.Parity = NOPARITY;
-	dcbSerialParams.fDtrControl = 0;
-	dcbSerialParams.fRtsControl = 0;
-	*/
+
 	printf("ComPort Baud %d data %d stop %d \n", dcbSerialParams.BaudRate, dcbSerialParams.ByteSize, (int)dcbSerialParams.StopBits);
 	if (!BuildCommDCB("baud=115200 parity=n data=8 stop=1", &port))
 		printf("error building comm DCB");
@@ -91,11 +98,11 @@ void PortConfig(HANDLE port, int Speed)
 
 
 	COMMTIMEOUTS timeouts = { 0 };
-	timeouts.ReadIntervalTimeout =  0;
-	timeouts.ReadTotalTimeoutConstant =  0;
-	timeouts.ReadTotalTimeoutMultiplier =  1;
-	timeouts.WriteTotalTimeoutConstant =  0;
-	timeouts.WriteTotalTimeoutMultiplier =  1;
+	timeouts.ReadIntervalTimeout = 0;
+	timeouts.ReadTotalTimeoutConstant = 0;
+	timeouts.ReadTotalTimeoutMultiplier = 1;
+	timeouts.WriteTotalTimeoutConstant = 0;
+	timeouts.WriteTotalTimeoutMultiplier = 1;
 	if (!SetCommTimeouts(port, &timeouts))
 		printf("error setCommTimeouts!\n");
 
@@ -110,28 +117,24 @@ void PortConfig(HANDLE port, int Speed)
 double GetTime()
 	{
 	__int64 time1 = 0, time2 = 0, freq = 0;
-	QueryPerformanceCounter((LARGE_INTEGER *)&time1);
-	QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
+	QueryPerformanceCounter((LARGE_INTEGER*)&time1);
+	QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
 	return (double)time1 / freq;
 	}
 
 int WriteString(HANDLE cp, char* m)
 	{
 	DWORD BytesWritten;
-	for (int a=0;a<strlen(m);a++)
+	for (int a = 0; a < strlen(m); a++)
 		WriteFile(cp, &m[a], 1, &BytesWritten, NULL);
-
-	//WriteFile(cp, m, strlen(m), &BytesWritten, NULL);
-	//if (BytesWritten != strlen(m))
-	//	printf("Writestring error\n");
 	return BytesWritten;
 	}
+
 int WriteBytes(HANDLE cp, char* buf, int size)
 	{
 	DWORD BytesWritten;
-	for (int a = 0; a <size; a++)
+	for (int a = 0; a < size; a++)
 		WriteFile(cp, &buf[a], 1, &BytesWritten, NULL);
-	//WriteFile(cp, buf, size, &BytesWritten, NULL);
 	return BytesWritten;
 	}
 int WriteDWORD(HANDLE cp, DWORD data)
@@ -140,19 +143,18 @@ int WriteDWORD(HANDLE cp, DWORD data)
 	char* dat = (char*)&data;
 	for (int a = 0; a < 4; a++)
 		WriteFile(cp, &dat[a], 1, &BytesWritten, NULL);
-	//WriteFile(cp, &size,4, &BytesWritten, NULL);
 	return BytesWritten;
 	}
 
 int Consume(HANDLE ComPort, char* EatMe, int TimeOut)
 	{
 	char* teatme = EatMe;
-	while (*teatme &&  TimeOut)
+	while (*teatme && TimeOut)
 		{
 		char Byte;
 		DWORD dwBytesRead;
 		ReadFile(ComPort, &Byte, 1, &dwBytesRead, NULL);
-		
+
 		if (dwBytesRead == 1)
 			{
 			if (Byte == *teatme)
@@ -173,7 +175,7 @@ int Consume(HANDLE ComPort, char* EatMe, int TimeOut)
 void SendFile(HANDLE comport, char* filename)
 	{
 	printf("PC: Sending File %s to Seed\n", filename);
-	FILE *F = fopen(filename, "rb");
+	FILE* F = fopen(filename, "rb");
 	if (F)
 		{
 		double st = GetTime();
@@ -186,7 +188,7 @@ void SendFile(HANDLE comport, char* filename)
 		fclose(F);
 		printf("PC: file size is %2.1fKb\n", (float)fsize / (1024));
 		DWORD crc = crc32(Data, fsize);
-		
+
 		WriteString(comport, "SEEDFILE");
 		// We Send 1024 bytes of data 
 
@@ -197,10 +199,10 @@ void SendFile(HANDLE comport, char* filename)
 		WriteDWORD(comport, (DWORD)'RAW ');
 		WriteString(comport, filename);
 		char temp[1024];
-		memset(temp, 0,1024);
-		WriteBytes(comport,temp, 1024 - (20 + strlen(filename)));
+		memset(temp, 0, 1024);
+		WriteBytes(comport, temp, 1024 - (20 + strlen(filename)));
 
-		char *tdata = Data;
+		char* tdata = Data;
 
 		printf(ANSIYELLOW"PC: File Transfer: "ANSIWHITE);
 		while (fsize)
@@ -242,13 +244,11 @@ HANDLE EnumComPorts()
 	for (int a = 0; a < 50; a++)
 		{
 		sprintf(ComString, "COM%d", a);
-		if (QueryDosDevice(ComString, Res, 1024)>0)
+		if (QueryDosDevice(ComString, Res, 1024) > 0)
 			{
-			//printf("PC: Trying COM%d\n", a, Res);
 			HANDLE ComPort = OpenPort(ComString);
 			PortConfig(ComPort, UartSpeed);
 			WriteString(ComPort, "SEEDHELO");
-			//printf("Sending SEEDGOOD\n");
 			if (Consume(ComPort, "SEEDGOOD", 15))
 				{
 				printf("PC: Found Seed on %s %s\n", ComString, Res);
@@ -260,9 +260,9 @@ HANDLE EnumComPorts()
 	return 0;
 	}
 
-int main(int nArgC, char **ppArgV)
+int main(int nArgC, char** ppArgV)
 	{
-	char *pArg0 = *ppArgV++;
+	char* pArg0 = *ppArgV++;
 	nArgC--;
 	system("cls");
 	printf(ANSIGREEN"SeedCom V1.00 Serial Daisy Seed Comms Utility (C) 2021 S.D.Smith\n\n"ANSIWHITE);
@@ -273,7 +273,7 @@ int main(int nArgC, char **ppArgV)
 		printf(ANSIRED"\nPC: Daisy Seed not found :(\n"ANSIWHITE);
 		return 0;
 		}
-	printf("PC: Uart speed is %d = %2.1fKb/s\n",  UartSpeed,(float)UartSpeed / (9 * 1024));
+	printf("PC: Uart speed is %d = %2.1fKb/s\n", UartSpeed, (float)UartSpeed / (9 * 1024));
 
 	char* filesend = 0;
 	int Reboot = 0;
@@ -295,15 +295,14 @@ int main(int nArgC, char **ppArgV)
 		char ch;
 		ReadFile(ComPort, Buf, 1, &dwBytesRead, NULL);
 		Buf[dwBytesRead] = 0;
-	//	if (dwBytesRead > 0)
-			printf("%s", Buf);
+		printf("%s", Buf);
 
-			while (kbhit()) 
-				{
-				ch = getch();
-				if (ch == 13) printf("\n");
-				WriteFile(ComPort, &ch, 1, &written, NULL);
-				}
+		while (kbhit())
+			{
+			ch = getch();
+			if (ch == 13) printf("\n");
+			WriteFile(ComPort, &ch, 1, &written, NULL);
+			}
 		if (Reboot)
 			{
 			printf("PC: Rebooting Seed\n");
