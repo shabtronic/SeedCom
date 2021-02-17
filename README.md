@@ -87,6 +87,7 @@ Seed will only receive the file if the CRC is different - this is handy - no nee
 it saves on time and flash write wear.
 
 Seed will send back SEEDGOOD after every 1024 byte chunk and the final chunk has been received
+
 Seed will send back SEEDFAIL is anything goes wrong or it refuses the file
 
 For the seed - the filename will currently always be "QFlashData.zip"
