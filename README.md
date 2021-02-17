@@ -26,10 +26,11 @@ file
 
 3) 
 add SeedComServer.cpp to your local makefile
+```
 # Sources
 CPP_SOURCES = MyMain.cpp SeedComServer.cpp
-
-add SeedComerver.h to your main cpp file
+```
+add SeedComServer.h to your main cpp file
 ```
 #include "SeedComServer.h"
 int main(void)
