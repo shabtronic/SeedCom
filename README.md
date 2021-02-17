@@ -153,6 +153,20 @@ yet to be decided, something like
 - FileSize(DWORD)
 - Crc32(DWORD)
 - RawData(BYTES)
+- 
+## Build Work Flow
+Since we now have a nice comms system, no need to mess around with pressing buttons on the device
+
+```
+make zip build/QFlashData reboot flash all
+```
+will:
+
+- zip up your local "QFLashData" directory
+- upload to the seed and write it to external flash memory (only if it has changed)
+- reboot the seed into DFU mode
+- build your project
+- upload your elf and run it
 
 ## TODO
 
