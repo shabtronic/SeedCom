@@ -129,6 +129,16 @@ For the seed - the filename will currently always be "QFlashData.zip"
 Currently only supports 1 file in flash, but since it's a .zip file - it contains a whole file system structure
 and SEEDDUMP will list all those files inside.
 
+## Flash Memory Layout
+
+Filename[256]
+
+FileSize(DWORD)
+
+Crc32(DWORD)
+
+RawData(BYTES)
+
 ## TODO
 
 Flash writing
