@@ -168,6 +168,8 @@ will:
 - build your project
 - upload your elf and run it
 
+Of course this only works if your seed is running the SerialCommServer, if for some reason your seed crashes - then you'll have to go back to the old button/press method until it is running again.
+
 ## TODO
 
 File Transfer code
@@ -176,5 +178,6 @@ Flash writing
 
 Zip Loading/Decoding e.t.c.
 
+WatchDog crash/hang into DFU mode
 Instrumented Profiling system
 
