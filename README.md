@@ -71,20 +71,20 @@ and it doesn't seem to make any difference at all changing it
 
 ![](./Images/seedcom3.png)
 
-~~\DaisyExamples\libdaisy\src\usbd\usbd_cdc_if.c line 204
+~~\DaisyExamples\libdaisy\src\usbd\usbd_cdc_if.c line 204~~
 ```
 static uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
 ```
 
-~~you have to change that line to
+~~you have to change that line to~~
 
 ```
 ~~uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
 ```
 
-~~so we can easily change the speed in main code
+~~so we can easily change the speed in main code~~
 
-~~You change the baudrate to any of these:
+~~You change the baudrate to any of these:~~
 ```
 ~~115,200 10kb/s
 ~~921,000 100kb/s
@@ -95,21 +95,21 @@ static uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
 50,000,000 5.4mb/s
 ```
 
-~~rebuild your libdaisy.a
+~~rebuild your libdaisy.a~~
 
-~~\DaisyExamples\Libdaisy\make clean all  (may have to do this twice!)
+~~\DaisyExamples\Libdaisy\make clean all  (may have to do this twice!)~~
 
-~~then make your project!
+~~then make your project!~~
 
-~~max speed so far is 
+~~max speed so far is ~~
 ```
 ComPort Baud 271658240 data 8 stop 0
 PC: Found Seed on COM4 \Device\USBSER000
 PC: Uart speed is 271658240 = 29476.8Kb/s
 ```
-271,658,240bps (29MB/s) - untested - which seems like a bug, and is BONKERS :)
+~~271,658,240bps (29MB/s) - untested - which seems like a bug, and is BONKERS :)~~
 
-~~so that would be 0.027 secs transfer time for the full 8MB - which is clearly insanity.
+~~so that would be 0.027 secs transfer time for the full 8MB - which is clearly insanity.~~
 
 
 ## How do I upload files to flash
