@@ -65,7 +65,7 @@ type "SEEDBOOT" - it will reboot the seed into DFU mode
 ![](./Images/seedcom2.png)
 ## How do I change the transfer speed?
 
-currently it's hardcoded to 115200bps, and it doesn't seem to make any difference at all changing it, and it actually transfers around 7528000bps!
+currently it's hardcoded to 115200bps, and it doesn't seem to make any difference at all changing it. Win comm api reports "ComPort Baud 271658240 data 8 stop 0" and it actually transfers around 7528000bps!
 
 ![](./Images/seedcom3.png)
 
