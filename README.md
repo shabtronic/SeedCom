@@ -24,9 +24,9 @@ this adds new make commands
 - REBOOT
 - FILE
 - 
-~~3) Change the internal libs baudrate
+~~3) Change the internal libs baudrate~~
 
-~~see below "How do I change the transfer speed" - this must be done, else the code won't compile
+~~see below "How do I change the transfer speed" - this must be done, else the code won't compile~~
 
 3) Add to your project
 
