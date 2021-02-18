@@ -73,7 +73,7 @@ and it doesn't seem to make any difference at all changing it
 
 
 There's a simple transfer speed test built into seedcom. Press x - and it'll
-transfer some data to the data and display the transfer speed.
+transfer some data to the data and display the transfer speed!
 
 ~~\DaisyExamples\libdaisy\src\usbd\usbd_cdc_if.c line 204~~
 
@@ -96,7 +96,7 @@ transfer some data to the data and display the transfer speed.
 
 ~~then make your project!~~
 
-~~max speed so far is ~~
+~~max speed so far is~~
 
 ~~271,658,240bps (29MB/s) - untested - which seems like a bug, and is BONKERS :)~~
 
