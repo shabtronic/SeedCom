@@ -1,11 +1,15 @@
 ﻿#include <windows.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <conio.h>
+
 const int UartSpeed = 115200;
 const int UartBits = 8;
 const int UartStopBits = 1;
 DCB dcbSerialParams = { 0 };
+#define true 1
+#define false 0
 #define ConsumeTimeout 5
 
 #define ORIGIN "PC: "
@@ -41,6 +45,8 @@ DCB dcbSerialParams = { 0 };
 
 // printf doesn't redirect in mingw64 - so this:
 HANDLE screen;
+#define WriteScreen printf
+/*
 void WriteScreen(char* format, ...)
 	{
 	char buffer[256];
@@ -51,7 +57,7 @@ void WriteScreen(char* format, ...)
 	WriteFile(screen, buffer, strlen(buffer), &written, NULL);
 	va_end(args);
 	}
-
+	*/
 char cornerset[] = "│─┐└┘┌";
 char conerset2[] = "║═╗╚╝╔";
 
@@ -101,7 +107,7 @@ void PortConfig(HANDLE port, int Speed)
 
 	dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
 	GetCommState(port, &dcbSerialParams);
-
+	dcbSerialParams.BaudRate = 9600;// 115200 * 8;
 	WriteScreen("ComPort Baud %d data %d stop %d \n", dcbSerialParams.BaudRate, dcbSerialParams.ByteSize, (int)dcbSerialParams.StopBits);
 	char Temp[256];
 	sprintf(Temp, "baud=%d parity=n data=8 stop=1", dcbSerialParams.BaudRate);
@@ -109,15 +115,17 @@ void PortConfig(HANDLE port, int Speed)
 		WriteScreen("error building comm DCB");
 	if (!SetCommState(port, &dcbSerialParams))
 		WriteScreen("error Setting commstate\n");
+	GetCommState(port, &dcbSerialParams);
+	WriteScreen("ComPort Baud %d data %d stop %d \n", dcbSerialParams.BaudRate, dcbSerialParams.ByteSize, (int)dcbSerialParams.StopBits);
 
 	GetCommState(port, &dcbSerialParams);
 
 	COMMTIMEOUTS timeouts = { 0 };
-	timeouts.ReadIntervalTimeout = 0;
-	timeouts.ReadTotalTimeoutConstant = 0;
-	timeouts.ReadTotalTimeoutMultiplier = 1;
-	timeouts.WriteTotalTimeoutConstant = 0;
-	timeouts.WriteTotalTimeoutMultiplier = 1;
+	timeouts.ReadIntervalTimeout = 10;
+	timeouts.ReadTotalTimeoutConstant = 10;
+	timeouts.ReadTotalTimeoutMultiplier = 10;
+	timeouts.WriteTotalTimeoutConstant = 10;
+	timeouts.WriteTotalTimeoutMultiplier = 10;
 	if (!SetCommTimeouts(port, &timeouts))
 		WriteScreen("error setCommTimeouts!\n");
 
@@ -140,16 +148,19 @@ double GetTime()
 int WriteString(HANDLE cp, char* m)
 	{
 	DWORD BytesWritten;
-	for (int a = 0; a < strlen(m); a++)
-		WriteFile(cp, &m[a], 1, &BytesWritten, NULL);
+	//for (int a = 0; a < strlen(m); a++)
+	//	WriteFile(cp, &m[a], 1, &BytesWritten, NULL);
+	WriteFile(cp, m, strlen(m), &BytesWritten, NULL);
 	return BytesWritten;
 	}
 
 int WriteBytes(HANDLE cp, char* buf, int size)
 	{
 	DWORD BytesWritten;
-	for (int a = 0; a < size; a++)
-		WriteFile(cp, &buf[a], 1, &BytesWritten, NULL);
+	//for (int a = 0; a < size; a++)
+	//	WriteFile(cp, &buf[a], 1, &BytesWritten, NULL);
+	WriteFile(cp, buf, size, &BytesWritten, NULL);
+
 	return BytesWritten;
 	}
 int WriteDWORD(HANDLE cp, DWORD data)
@@ -161,7 +172,7 @@ int WriteDWORD(HANDLE cp, DWORD data)
 	return BytesWritten;
 	}
 
-int Consume(HANDLE ComPort, char* EatMe, int TimeOut)
+int Consume(HANDLE ComPort, char* EatMe, int TimeOut,_Bool write)
 	{
 	char* teatme = EatMe;
 	while (*teatme && TimeOut)
@@ -172,6 +183,8 @@ int Consume(HANDLE ComPort, char* EatMe, int TimeOut)
 
 		if (dwBytesRead == 1)
 			{
+			if (write)
+				WriteScreen("%c", Byte);
 			if (Byte == *teatme)
 				teatme++;
 			else
@@ -226,7 +239,7 @@ void SendFile(HANDLE comport, char* filename)
 			WriteScreen(ANSIGREEN"%5.1f%%\b\b\b\b\b\b"ANSIGREEN, percent);
 			if (fsize >= 1024)
 				{
-				if (WriteBytes(comport, tdata, 1024) != 1024 || !Consume(comport, "SEEDGOOD", 50))
+				if (WriteBytes(comport, tdata, 1024) != 1024 || !Consume(comport, "SEEDGOOD", 50,false))
 					{
 					WriteScreen(ANSIRED"\nPC: Error Sending File Chunk\n"ANSIWHITE);
 					goto cleanup;
@@ -236,7 +249,7 @@ void SendFile(HANDLE comport, char* filename)
 				}
 			else
 				{
-				if (WriteBytes(comport, tdata, fsize) != fsize || !Consume(comport, "SEEDGOOD", 500))
+				if (WriteBytes(comport, tdata, fsize) != fsize || !Consume(comport, "SEEDGOOD", 500,false))
 					{
 					WriteScreen(ANSIRED"\nPC: Error Sending File Chunk\n"ANSIWHITE);
 					goto cleanup;
@@ -264,7 +277,7 @@ HANDLE EnumComPorts()
 			HANDLE ComPort = OpenPort(ComString);
 			PortConfig(ComPort, UartSpeed);
 			WriteString(ComPort, "SEEDHELO");
-			if (Consume(ComPort, "SEEDGOOD", 15))
+			if (Consume(ComPort, "SEEDGOOD", 15,false))
 				{
 				WriteScreen("PC: Found Seed on %s %s\n", ComString, Res);
 				return ComPort;
@@ -323,6 +336,26 @@ int main(int nArgC, char** ppArgV)
 			ch = getch();
 			if (ch == 13) WriteScreen("\n");
 			WriteFile(ComPort, &ch, 1, &written, NULL);
+			if (ch == 'x')
+				{
+				WriteScreen("Starting Transfer Test...\r\n\r\n");
+				WriteString(ComPort, "SEEDFILE");
+				Consume(ComPort, "SEEDGOOD", 50,false);
+
+				int st = GetTickCount();
+				char Test[0xffff];
+				for (int a = 0; a < 0xffff; a++)
+					Test[a] = 'f';
+				for (int a = 0; a < 16; a++)
+					{
+					WriteScreen("Written 16kb...\r\n");
+					WriteBytes(ComPort,Test,0x4000);
+					 if(!Consume(ComPort, "SEEDGOOD", 50, false))
+						 WriteScreen("Error no SEEDGOOD returned...\r\n");
+					}
+				st = GetTickCount() - st;
+				WriteScreen("\r\nTime Taken: %dms Transfer rate: %dKb/s\r\n", st,(int)((16*16)/((float)st/1000)));
+				}
 			}
 		if (Reboot)
 			{
