@@ -72,28 +72,19 @@ and it doesn't seem to make any difference at all changing it
 ![](./Images/seedcom3.png)
 
 ~~\DaisyExamples\libdaisy\src\usbd\usbd_cdc_if.c line 204~~
-```
-static uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
-```
+
+~~static uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };~~
+
 
 ~~you have to change that line to~~
 
-```
-~~uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
-```
+
+~~uint8_t line_coding_fs[7] = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };~~
+
 
 ~~so we can easily change the speed in main code~~
 
 ~~You change the baudrate to any of these:~~
-```
-~~115,200 10kb/s
-~~921,000 100kb/s
-~~2,000,000 217kb/s
-~~5,000,000 542kb/s
-10,000,000 1MB/s
-20,000,000 29MB/s
-50,000,000 5.4mb/s
-```
 
 ~~rebuild your libdaisy.a~~
 
